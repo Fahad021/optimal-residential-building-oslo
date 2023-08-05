@@ -124,19 +124,19 @@ def Skartevit2(df):
 
 
 def Engerer2(df):
-    S_cost = 1367  
-    C=0.042336
-    b0=-3.7912
-    b1=7.5479
-    b2=-0.010036
-    b3=0.0031480
-    b4=-5.3146
     b5=1.7073
     if df['ghi'] >= 8 and df['zenith'] <= 85 and df['k_t'] <= 1.2:
+        S_cost = 1367
         df['G_0'] = S_cost*(1 + 0.03344*cos(radians(360*(df['doy'])/365.25)))*cos(radians(df['zenith']))
         ktc=df['G_c']/df['G_0']
         deltak=ktc-df['k_t']
-        
+
+        C=0.042336
+        b0=-3.7912
+        b1=7.5479
+        b2=-0.010036
+        b3=0.0031480
+        b4=-5.3146
         #df['k_d']=0.042336+(1-0.042336)/(1+exp(-3.7912+7.5479*df['k_t']-0.010036*df['AST']+0.0031480*df['zenith']-5.3146+deltak))
         df['k_d']=C+(1-C)/(1+exp(b0+b1*df['k_t']+b2*df['AST']+b3*df['zenith']+b4*deltak))
         df['dhi'] = df['k_d']*df['ghi']
@@ -243,13 +243,9 @@ def boland1(df):
 def k_calc(df):
     df['k_b'] = df['dni']/df['dni_clear']
     df['k_d'] = df['dhi']/df['dhi_clear']
-    
-    if df['k_b']>1:
-        df['k_b']=1
-    
-    if df['k_d']>=1:
-        df['k_d']=1
-    
+
+    df['k_b'] = min(df['k_b'], 1)
+    df['k_d'] = min(df['k_d'], 1)
     return df
     
     

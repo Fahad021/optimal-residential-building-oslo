@@ -34,29 +34,31 @@ class MySubscriber:
 		def myOnConnect (self, paho_mqtt, userdata, flags, rc):
 			print ("Connected to %s with result code: %d" % (self.messageBroker, rc))
 
-		def myOnMessageReceived (self, paho_mqtt , userdata, msg):
-			# A new message is received
-			print ("Topic:'" + msg.topic+"', QoS: '"+str(msg.qos)+"' Message: '"+str(msg.payload) + "'")
-			try:
-				data=json.loads(msg.payload)
-				json_body = [
-					{
-					"measurement": data['measurement'],
-					"tags": 
+		def myOnMessageReceived(self, paho_mqtt , userdata, msg):
+					# A new message is received
+				print(
+				    f"Topic:'{msg.topic}', QoS: '{str(msg.qos)}' Message: '{str(msg.payload)}'"
+				)
+				try:
+					data=json.loads(msg.payload)
+					json_body = [
 						{
-						"node": data['node'],
-						"location": data['location']
-						},
-					"time": data['time_stamp'],
-					"fields":
-						{
-						"value":data['value']
+						"measurement": data['measurement'],
+						"tags": 
+							{
+							"node": data['node'],
+							"location": data['location']
+							},
+						"time": data['time_stamp'],
+						"fields":
+							{
+							"value":data['value']
+							}
 						}
-					}
-				]
-				self.client.write_points(json_body,time_precision='s')
-			except Exception as e:
-				print (e)
+					]
+					self.client.write_points(json_body,time_precision='s')
+				except Exception as e:
+					print (e)
 
 if __name__ == "__main__":
 	test = MySubscriber('OsloBuilding')

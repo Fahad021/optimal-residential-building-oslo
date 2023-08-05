@@ -41,18 +41,19 @@ if __name__ == "__main__":
 		for j in df.loc[i].items():
 			key = j[0]
 			value = j[1]
-			if key == 'power_heating' or key == 'power_cooling':
-				measurement = "Power" 
+			if key in ['power_heating', 'power_cooling']:
+				measurement = "Power"
 			elif key == 'solar_rad':
 				measurement = "Solar radiation"
 			else:
 				measurement = "Temperature"
 			payload = {
-						"location": str(GATEWAY_NAME),
-						"measurement": measurement,
-						"node": str(key),
-						"time_stamp": str(i),
-						"value": value}
+				"location": GATEWAY_NAME,
+				"measurement": measurement,
+				"node": str(key),
+				"time_stamp": str(i),
+				"value": value,
+			}
 			test.myPublish('ict4bd', json.dumps(payload))
 			time.sleep(0.1)
 	test.stop()
